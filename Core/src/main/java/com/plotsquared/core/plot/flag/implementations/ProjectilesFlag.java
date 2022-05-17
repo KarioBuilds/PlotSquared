@@ -23,28 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.generator.GeneratorWrapper;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.setup.PlotAreaBuilder;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.HashMap;
+public class ProjectilesFlag extends BooleanFlag<ProjectilesFlag> {
 
-public abstract class SetupUtils {
+    public static final ProjectilesFlag PROJECTILES_TRUE = new ProjectilesFlag(true);
+    public static final ProjectilesFlag PROJECTILES_FALSE = new ProjectilesFlag(false);
 
-    public static HashMap<String, GeneratorWrapper<?>> generators = new HashMap<>();
-    protected boolean loaded = false;
+    private ProjectilesFlag(boolean value){
+        super(value, TranslatableCaption.of("flags.flag_description_projectiles"));
+    }
 
-    /**
-     * @since 6.1.0
-     */
-    public abstract void updateGenerators(final boolean force);
-
-    public abstract String getGenerator(final PlotArea plotArea);
-
-    public abstract String setupWorld(final PlotAreaBuilder builder);
-
-    public abstract void unload(String world, boolean save);
+    @Override
+    protected ProjectilesFlag flagOf(@NonNull final Boolean value) {
+        return value ? PROJECTILES_TRUE : PROJECTILES_FALSE;
+    }
 
 }

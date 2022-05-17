@@ -35,6 +35,7 @@ import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -143,7 +144,8 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Set a chunk object (e.g. the Bukkit Chunk object) to the queue
+     * Set a chunk object (e.g. the Bukkit Chunk object) to the queue. This will be used as fallback in case of WNA failure.
+     * Should ONLY be used in specific cases (i.e. generation, where a chunk is being populated)
      *
      * @param chunkObject chunk object. Usually the implementation-specific chunk (e.g. bukkit Chunk)
      */
@@ -246,6 +248,14 @@ public abstract class QueueCoordinator {
      * @return if setting biomes
      */
     public abstract boolean isSettingBiomes();
+
+    /**
+     * If the queue should accept biome placement
+     *
+     * @param enabled If biomes should be enabled
+     * @since TODO
+     */
+    public abstract void setBiomesEnabled(boolean enabled);
 
     /**
      * Add entities to be created
@@ -411,6 +421,20 @@ public abstract class QueueCoordinator {
      * @param mode lighting mode. Null to use default.
      */
     public abstract void setLightingMode(@Nullable LightingMode mode);
+
+    /**
+     * Get the overriding {@link SideEffectSet} to be used by the queue if it exists, else null
+     *
+     * @return Overriding {@link SideEffectSet} or null
+     */
+    public abstract @Nullable SideEffectSet getSideEffectSet();
+
+    /**
+     * Set the overriding {@link SideEffectSet} to be used by the queue. Null to use default side effects.
+     *
+     * @param sideEffectSet side effects to override with, or null to use default
+     */
+    public abstract void setSideEffectSet(@Nullable SideEffectSet sideEffectSet);
 
     /**
      * Fill a cuboid between two positions with a BlockState
