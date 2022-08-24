@@ -1,32 +1,27 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intellectualsites.annotations.DoNotUse;
+import com.intellectualsites.annotations.NotPublic;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
@@ -40,7 +35,6 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
@@ -75,7 +69,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public int PLOT_SCHEMATIC_HEIGHT = -1;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
@@ -108,7 +102,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         PlotSquared.platform().injector().injectMembers(this);
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public static byte wrap(byte data, int start) {
         if ((data >= start) && (data < (start + 4))) {
             data = (byte) ((((data - start) + 2) & 3) + start);
@@ -116,7 +110,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return data;
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public static byte wrap2(byte data, int start) {
         if ((data >= start) && (data < (start + 2))) {
             data = (byte) ((((data - start) + 1) & 1) + start);
@@ -466,7 +460,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            if (y != lastOverlayHeightError) {
+            if (y > lastOverlayHeightError) {
                 lastOverlayHeightError = y;
                 LOGGER.error(String.format("Error adding overlay block. `y > height`. y=%s, height=%s", y, height));
             }
@@ -493,9 +487,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * Get the entities contained within the plot schematic for generation. Intended for internal use only.
      *
-     * @since TODO
+     * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public @Nullable List<Entity> getPlotSchematicEntities() {
         return schem3Entities;
     }
@@ -503,9 +497,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * Get the minimum point of the plot schematic for generation. Intended for internal use only.
      *
-     * @since TODO
+     * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public @Nullable BlockVector3 getPlotSchematicMinPoint() {
         return schem3MinPoint;
     }
@@ -513,9 +507,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * Get if post-generation population of chunks with tiles/entities is needed for this world. Not for public API use.
      *
-     * @since TODO
+     * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public boolean populationNeeded() {
         return schem1PopulationNeeded || schem2PopulationNeeded || schem3PopulationNeeded;
     }
@@ -523,7 +517,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * @deprecated in favour of {@link HybridPlotWorld#getSchematicRoot()}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public File getRoot() {
         return this.root;
     }
@@ -532,7 +526,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      * Get the root folder for this world's generation schematics. May be null if schematics not initialised via
      * {@link HybridPlotWorld#setupSchematics()}
      *
-     * @since TODO
+     * @since 6.9.0
      */
     public @Nullable File getSchematicRoot() {
         return this.root;
