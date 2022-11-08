@@ -41,6 +41,7 @@ import com.plotsquared.bukkit.listener.PlayerEventListener;
 import com.plotsquared.bukkit.listener.ProjectileEventListener;
 import com.plotsquared.bukkit.listener.ServerListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
+import com.plotsquared.bukkit.listener.SpigotListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
@@ -360,6 +361,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 } else {
                     getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
                 }
+            } else {
+                getServer().getPluginManager().registerEvents(injector().getInstance(SpigotListener.class), this);
             }
             this.plotListener.startRunnable();
         }
@@ -846,11 +849,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             // managed elsewhere
                             continue;
                         case "SHULKER":
-                            if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                            if (Settings.Enabled_Components.KILL_ROAD_MOBS && (Settings.Enabled_Components.KILL_NAMED_ROAD_MOBS || entity.getCustomName() == null)) {
                                 LivingEntity livingEntity = (LivingEntity) entity;
                                 List<MetadataValue> meta = entity.getMetadata("shulkerPlot");
                                 if (!meta.isEmpty()) {
-                                    if (livingEntity.isLeashed()) {
+                                    if (livingEntity.isLeashed() && !Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS) {
                                         continue;
                                     }
                                     List<MetadataValue> keep = entity.getMetadata("keep");
@@ -863,10 +866,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         com.plotsquared.core.location.Location pLoc = BukkitUtil.adapt(entity.getLocation());
                                         PlotArea area = pLoc.getPlotArea();
                                         if (area != null) {
-                                            PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
-                                            if (!originalPlotId.equals(currentPlotId) && (currentPlotId == null || !area.getPlot(
-                                                            originalPlotId)
-                                                    .equals(area.getPlot(currentPlotId)))) {
+                                            Plot currentPlot = area.getPlotAbs(pLoc);
+                                            if (currentPlot == null || !originalPlotId.equals(currentPlot.getId())) {
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
@@ -880,11 +881,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     com.plotsquared.core.location.Location pLoc = BukkitUtil.adapt(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
-                                        PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
-                                        if (currentPlotId != null) {
+                                        Plot currentPlot = area.getPlotAbs(pLoc);
+                                        if (currentPlot != null) {
                                             entity.setMetadata(
                                                     "shulkerPlot",
-                                                    new FixedMetadataValue((Plugin) PlotSquared.platform(), currentPlotId)
+                                                    new FixedMetadataValue((Plugin) PlotSquared.platform(), currentPlot.getId())
                                             );
                                         }
                                     }
@@ -970,7 +971,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 || !entity.hasMetadata("keep")) {
                                             Entity passenger = entity.getPassenger();
                                             if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS
-                                                    || !(passenger instanceof Player)) && entity.getMetadata("keep").isEmpty()) {
+                                                    || !((passenger instanceof Player) || livingEntity.isLeashed()))
+                                                    && (Settings.Enabled_Components.KILL_NAMED_ROAD_MOBS || entity.getCustomName() == null)
+                                                    && entity.getMetadata("keep").isEmpty()) {
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
@@ -980,8 +983,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         }
                                     } else {
                                         Entity passenger = entity.getPassenger();
-                                        if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS
-                                                || !(passenger instanceof Player)) && entity.getMetadata("keep").isEmpty()) {
+                                        if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS || !(passenger instanceof Player))
+                                                && (Settings.Enabled_Components.KILL_NAMED_ROAD_MOBS && entity.getCustomName() != null)
+                                                && entity.getMetadata("keep").isEmpty()) {
                                             if (entity.hasMetadata("ps-tmp-teleport")) {
                                                 continue;
                                             }
