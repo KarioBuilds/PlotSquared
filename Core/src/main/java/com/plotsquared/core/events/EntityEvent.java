@@ -22,7 +22,7 @@ import com.sk89q.worldedit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * @since TODO
+ * @since 6.11.1
  */
 public abstract class EntityEvent {
 
@@ -53,7 +53,8 @@ public abstract class EntityEvent {
      * @return the event class name
      * @since 6.11.0
      */
-    @NonNull public String getEventName() {
+    @NonNull
+    public String getEventName() {
         if (this.name == null) {
             this.name = this.getClass().getSimpleName();
         }
