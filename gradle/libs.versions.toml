@@ -4,8 +4,8 @@ guice = "5.1.0"
 spotbugs = "4.7.3"
 
 # Plugins
-worldedit = "7.2.13"
-placeholderapi = "2.11.2"
+worldedit = "7.2.14"
+placeholderapi = "2.11.3"
 luckperms = "5.4"
 essentialsx = "2.19.7"
 mvdwapi = "3.1.1"
@@ -13,14 +13,14 @@ mvdwapi = "3.1.1"
 # Third party
 prtree = "2.0.1"
 aopalliance = "1.0"
-cloud-services = "1.8.2"
+cloud-services = "1.8.3"
 arkitektonika = "2.1.2"
 squirrelid = "0.3.1"
 
 # Gradle plugins
 shadow = "7.1.2"
 grgit = "4.1.1"
-spotless = "6.16.0"
+spotless = "6.17.0"
 nexus = "1.3.0"
 
 [libraries]
