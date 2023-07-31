@@ -19,8 +19,3 @@ jobs:
           java-version: 17
       - name: Clean Build
         run: ./gradlew clean build
-#       - name: Upload PlotSquared
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: PlotSquared
-#           path: build/libs/*.jar
