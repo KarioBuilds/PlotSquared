@@ -77,12 +77,12 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-newest:1.31"))
+        implementation(platform("com.intellectualsites.bom:bom-newest:1.34"))
     }
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     }
 
     plugins.withId("java") {
