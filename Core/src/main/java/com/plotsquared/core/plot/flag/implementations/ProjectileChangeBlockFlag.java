@@ -22,20 +22,18 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-/**
- * @since 7.2.1
- */
-public class EditSignFlag extends BooleanFlag<EditSignFlag> {
-    public static final EditSignFlag EDIT_SIGN_TRUE = new EditSignFlag(true);
-    public static final EditSignFlag EDIT_SIGN_FALSE = new EditSignFlag(false);
+public class ProjectileChangeBlockFlag extends BooleanFlag<ProjectileChangeBlockFlag> {
 
-    private EditSignFlag(final boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_edit_sign"));
+    public static final ProjectileChangeBlockFlag PROJECTILE_CHANGE_BLOCK_TRUE = new ProjectileChangeBlockFlag(true);
+    public static final ProjectileChangeBlockFlag PROJECTILE_CHANGE_BLOCK_FALSE = new ProjectileChangeBlockFlag(false);
+
+    private ProjectileChangeBlockFlag(boolean value) {
+        super(value, TranslatableCaption.of("flags.flag_description_projectile_change_block"));
     }
 
     @Override
-    protected EditSignFlag flagOf(@NonNull final Boolean value) {
-        return value ? EDIT_SIGN_TRUE : EDIT_SIGN_FALSE;
+    protected ProjectileChangeBlockFlag flagOf(@NonNull Boolean value) {
+        return value ? PROJECTILE_CHANGE_BLOCK_TRUE : PROJECTILE_CHANGE_BLOCK_FALSE;
     }
 
 }
