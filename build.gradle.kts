@@ -1,5 +1,6 @@
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
+import com.vanniktech.maven.publish.SonatypeHost
 import groovy.json.JsonSlurper
 import xyz.jpenilla.runpaper.task.RunServer
 import java.net.URI
@@ -7,13 +8,12 @@ import java.net.URI
 plugins {
     java
     `java-library`
-    `maven-publish`
     signing
 
     alias(libs.plugins.shadow)
     alias(libs.plugins.spotless)
     alias(libs.plugins.grgit)
-    alias(libs.plugins.nexus)
+    alias(libs.plugins.publish)
 
     eclipse
     idea
@@ -42,16 +42,6 @@ subprojects {
         mavenCentral()
 
         maven {
-            name = "Sonatype OSS"
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-        }
-
-        maven {
-            name = "Sonatype OSS (S01)"
-            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-        }
-
-        maven {
             name = "Jitpack"
             url = uri("https://jitpack.io")
             content {
@@ -68,7 +58,7 @@ subprojects {
     apply {
         plugin<JavaPlugin>()
         plugin<JavaLibraryPlugin>()
-        plugin<MavenPublishPlugin>()
+        plugin<com.vanniktech.maven.publish.MavenPublishPlugin>()
         plugin<ShadowPlugin>()
         plugin<SpotlessPlugin>()
         plugin<SigningPlugin>()
@@ -79,8 +69,8 @@ subprojects {
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.12.1")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.1")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.2")
     }
 
     plugins.withId("java") {
@@ -107,11 +97,6 @@ subprojects {
         }
     }
 
-    java {
-        withSourcesJar()
-        withJavadocJar()
-    }
-
     val javaComponent = components["java"] as AdhocComponentWithVariants
     javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
         skip()
@@ -127,66 +112,67 @@ subprojects {
         }
     }
 
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                from(components["java"])
+    mavenPublishing {
+        coordinates(
+            groupId = "$group",
+            artifactId = project.name,
+            version = "${project.version}",
+        )
 
-                pom {
+        pom {
+            name.set(project.name)
+            description.set("PlotSquared, a land and world management plugin for Minecraft.")
+            url.set("https://github.com/IntellectualSites/PlotSquared")
 
-                    name.set(project.name + " " + project.version)
-                    description.set("PlotSquared, a land and world management plugin for Minecraft.")
-                    url.set("https://github.com/IntellectualSites/PlotSquared")
-
-                    licenses {
-                        license {
-                            name.set("GNU General Public License, Version 3.0")
-                            url.set("https://www.gnu.org/licenses/gpl-3.0.html")
-                            distribution.set("repo")
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id.set("Sauilitired")
-                            name.set("Alexander Söderberg")
-                            organization.set("IntellectualSites")
-                            organizationUrl.set("https://github.com/IntellectualSites")
-                        }
-                        developer {
-                            id.set("NotMyFault")
-                            name.set("Alexander Brandes")
-                            organization.set("IntellectualSites")
-                            organizationUrl.set("https://github.com/IntellectualSites")
-                            email.set("contact(at)notmyfault.dev")
-                        }
-                        developer {
-                            id.set("SirYwell")
-                            name.set("Hannes Greule")
-                            organization.set("IntellectualSites")
-                            organizationUrl.set("https://github.com/IntellectualSites")
-                        }
-                        developer {
-                            id.set("dordsor21")
-                            name.set("dordsor21")
-                            organization.set("IntellectualSites")
-                            organizationUrl.set("https://github.com/IntellectualSites")
-                        }
-                    }
-
-                    scm {
-                        url.set("https://github.com/IntellectualSites/PlotSquared")
-                        connection.set("scm:git:https://github.com/IntellectualSites/PlotSquared.git")
-                        developerConnection.set("scm:git:git@github.com:IntellectualSites/PlotSquared.git")
-                        tag.set("${project.version}")
-                    }
-
-                    issueManagement {
-                        system.set("GitHub")
-                        url.set("https://github.com/IntellectualSites/PlotSquared/issues")
-                    }
+            licenses {
+                license {
+                    name.set("GNU General Public License, Version 3.0")
+                    url.set("https://www.gnu.org/licenses/gpl-3.0.html")
+                    distribution.set("repo")
                 }
             }
+
+            developers {
+                developer {
+                    id.set("Sauilitired")
+                    name.set("Alexander Söderberg")
+                    organization.set("IntellectualSites")
+                    organizationUrl.set("https://github.com/IntellectualSites")
+                }
+                developer {
+                    id.set("NotMyFault")
+                    name.set("Alexander Brandes")
+                    organization.set("IntellectualSites")
+                    organizationUrl.set("https://github.com/IntellectualSites")
+                    email.set("contact(at)notmyfault.dev")
+                }
+                developer {
+                    id.set("SirYwell")
+                    name.set("Hannes Greule")
+                    organization.set("IntellectualSites")
+                    organizationUrl.set("https://github.com/IntellectualSites")
+                }
+                developer {
+                    id.set("dordsor21")
+                    name.set("dordsor21")
+                    organization.set("IntellectualSites")
+                    organizationUrl.set("https://github.com/IntellectualSites")
+                }
+            }
+
+            scm {
+                url.set("https://github.com/IntellectualSites/PlotSquared")
+                connection.set("scm:git:https://github.com/IntellectualSites/PlotSquared.git")
+                developerConnection.set("scm:git:git@github.com:IntellectualSites/PlotSquared.git")
+                tag.set("${project.version}")
+            }
+
+            issueManagement {
+                system.set("GitHub")
+                url.set("https://github.com/IntellectualSites/PlotSquared/issues")
+            }
+
+            publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
         }
     }
 
@@ -194,7 +180,6 @@ subprojects {
 
         compileJava {
             options.compilerArgs.add("-parameters")
-            options.isDeprecation = true
             options.encoding = "UTF-8"
         }
 
@@ -214,15 +199,6 @@ subprojects {
         withType<AbstractArchiveTask>().configureEach {
             isPreserveFileTimestamps = false
             isReproducibleFileOrder = true
-        }
-    }
-}
-
-nexusPublishing {
-    this.repositories {
-        sonatype {
-            nexusUrl.set(URI.create("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(URI.create("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
         }
     }
 }
