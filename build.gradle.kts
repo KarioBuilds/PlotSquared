@@ -65,10 +65,16 @@ subprojects {
         plugin<IdeaPlugin>()
     }
 
+    configurations.matching { it.name == "signatures" }.configureEach {
+        attributes {
+            attribute(Attribute.of("signatures-unique", String::class.java), "true")
+        }
+    }
+
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+        testImplementation("org.junit.jupiter:junit-jupiter:6.0.0")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.0")
     }
 
     plugins.withId("java") {
@@ -95,9 +101,15 @@ subprojects {
         }
     }
 
-    val javaComponent = components["java"] as AdhocComponentWithVariants
-    javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
-        skip()
+    afterEvaluate {
+        val javaComponent = components["java"] as AdhocComponentWithVariants
+        configurations.findByName("shadowRuntimeElements")?.let { shadowRuntimeElements ->
+            javaComponent.withVariantsFromConfiguration(shadowRuntimeElements) {
+                skip()
+            }
+        } ?: run {
+            logger.warn("Configuration 'shadowRuntimeElements' does not exist.")
+        }
     }
 
     signing {
