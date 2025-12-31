@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.intellectualsites.plotsquared"
-version = "7.5.9-SNAPSHOT"
+version = "7.5.12-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -73,8 +73,8 @@ subprojects {
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:6.0.0")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.0")
+        testImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.1")
     }
 
     plugins.withId("java") {
@@ -232,9 +232,10 @@ tasks {
         register<RunServer>("runServer-$it") {
             dependsOn(getByName("cacheLatestFaweArtifact"))
             minecraftVersion(it)
-            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false)
-                    .map { task -> (task as Jar).archiveFile }
-                    .toTypedArray())
+            pluginJars(project.files(
+                project(":plotsquared-bukkit").tasks.named<Jar>("shadowJar")
+                .map { it.archiveFile }
+            ))
             jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
             downloadPlugins {
                 url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/${project.ext["faweArtifact"]}")
